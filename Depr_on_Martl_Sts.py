@@ -4,11 +4,17 @@
 Created on Sat Apr 15 08:27:34 2017
 
 @author: sotelo
+
+Below script uses NESARC data to examine interaction between two variables:
+    1) Current (last 12 mos) presence of Major Depression
+    2) Marital Status
+https://pubs.niaaa.nih.gov/publications/arh29-2/74-78.htm
 """
 
 import pandas
 import numpy
 import scipy.stats
+import matplotlib.pyplot as plt
 
 #Read NESARC data file into DataFrame
 proj=pandas.read_csv('nesarc_pds.csv',low_memory=False)
@@ -48,6 +54,16 @@ colsum=ct1.sum(axis=0)
 pct1=ct1/colsum
 print('Crosstab: Percentages by Column')
 print(pct1)
+
+#Plot rates of major depression using horizontal bar plot
+plt.barh(range(len(pct1.columns)),numpy.array(pct1.iloc[1,:]),
+    tick_label=pct1.columns.values,edgecolor='black',linewidth=0.6)
+plt.title('Rates of Major Depression by Marital Status',x=0.35,size=18)
+plt.xlabel('Major Depression Rate',size=14)
+plt.ylabel('Marital Status',size=14)
+plt.xticks(size=12)
+plt.yticks(size=12)
+plt.grid(False)
 
 #Chi-Square statistic
 proj_chisq=scipy.stats.chi2_contingency(ct1)

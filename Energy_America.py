@@ -1,10 +1,12 @@
 ###################################
-### Include this header at start of all IDLE .py scripts
-import sys
-sys.path.append('C:\\Anaconda3\Lib\site-packages')
-
-import matplotlib
-matplotlib.use('TkAgg')
+#   Exploring the relationship between energy consumption & 
+#   energy price
+#
+#   Author: Dave Sotelo
+#   Date: May 1, 2017
+#
+#   Data from various public sources, via Kaggle - see below:
+#   https://www.kaggle.com/lislejoem/us_energy_census_gdp_10-14
 ###################################
 
 import pandas as pd

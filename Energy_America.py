@@ -13,6 +13,7 @@ import pandas as pd
 import scipy.stats as stat
 import matplotlib.pyplot as plt
 import seaborn as sbn
+import numpy as np
 
 #Read Energy Census & Economic Data file
 #Source: Various {Bureau of Economic Analysis, EIA} via Kaggle.com
@@ -66,3 +67,7 @@ ols_coeff=stat.pearsonr(nrg_cons['TotalPrice2014'],
     nrg_cons['TOTC2014'])
 print('Pearson Correlation Coefficient, 2-tailed p-value')
 print(ols_coeff)
+print('')
+ols_regr=np.polyfit(nrg_cons['TotalPrice2014'],nrg_cons['TOTC2014'], 1)
+print('OLS Linear Regression Coefficients')
+print(ols_regr)

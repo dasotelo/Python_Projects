@@ -1,10 +1,11 @@
 ###################################
-### Include this header at start of all IDLE .py scripts
-import sys
-sys.path.append('C:\\Anaconda3\Lib\site-packages')
-
-import matplotlib
-matplotlib.use('TkAgg')
+### 
+###  Examining speed dating results using Logistic regression
+###  Author: Dave Sotelo
+###  Date: 2017.05.13
+###
+###  Data freely available at Kaggle.com
+###  
 ###################################
 
 import pandas as pd
@@ -28,12 +29,6 @@ spd_wk=spd_dat.loc[spd_dat['gender']==0,['iid','gender','match',
     'attr','attr_o','sinc','sinc_o','intel','intel_o','fun','fun_o',
     'amb','amb_o','shar','shar_o']]
 spd_wk=spd_wk.dropna(axis=0)
-
-# Create new variable: attractiveness matching (ratio)
-# spd_wk['type1']=(spd_wk['attr_o']/spd_wk['attr'])
-# spd_wk['type2']=(spd_wk['attr']/spd_wk['attr_o'])
-# spd_wk['attr_2way']=spd_wk.loc[:,['type1','type2']].min(axis=1)
-# spd_wk=spd_wk.drop(labels=['type1','type2'],axis=1)
 
 # Create new variables: 2-way attribute averages
 spd_wk['attr_2avg']=abs((spd_wk['attr']+spd_wk['attr_o'])/2-10)

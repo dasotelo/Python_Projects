@@ -1,13 +1,4 @@
 ###################################
-### Include this header at start of all IDLE .py scripts
-import sys
-sys.path.append('C:\\Anaconda3\Lib\site-packages')
-
-import matplotlib
-matplotlib.use('TkAgg')
-###################################
-
-###################################
 #
 # Analysis of NBA shooting percentages using
 # Bayesian statistics & stochastic simulation

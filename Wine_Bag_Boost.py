@@ -4,7 +4,10 @@
 # Author: D Sotelo
 # Date 20170708
 #
-# Data: Wine reviews from 
+# Data available via Kaggle.com
+# https://www.kaggle.com/zynicide/wine-reviews
+#
+##########################################
 
 import pandas as pd
 import numpy as np

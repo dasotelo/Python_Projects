@@ -1,11 +1,10 @@
-###################################
-### Include this header at start of all IDLE .py scripts
-import sys
-sys.path.append('C:\\Anaconda3\Lib\site-packages')
-
-import matplotlib
-matplotlib.use('TkAgg')
-###################################
+##########################################
+# 
+# Comparing Bagging and Boosting Ensemble Methods
+# Author: D Sotelo
+# Date 20170708
+#
+# Data: Wine reviews from 
 
 import pandas as pd
 import numpy as np

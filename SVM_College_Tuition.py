@@ -69,23 +69,6 @@ acc_test=pd.DataFrame([],index=None,columns=['C','measure','coef1','coef2',
     'inter'])
 
 # Test using the following values for coefficient 'c'
-c_coeff=np.array([0.5,1,2,5,10,25,75,200])
-
-# Iterate across all 'c' coefficients and record accuracy & linear params
-for i in c_coeff:
-    print(i)
-    svf=SVC(C=i,kernel='linear')
-    svf=svf.fit(feat_train,target_train)
-    train_acc=sum(svf.predict(feat_train)==target_train)/len(target_train)
-    test_acc=sum(svf.predict(feat_test)==target_test)/len(target_test)
-    acc_train=acc_train.append(pd.DataFrame(np.reshape([i,train_acc,
-        svf.coef_[(0,0)],svf.coef_[(0,1)],svf.intercept_[0]],(1,5)),
-        columns=['C','measure','coef1','coef2','inter'],index=None))
-    acc_test=acc_test.append(pd.DataFrame(np.reshape([i,test_acc,
-        svf.coef_[(0,0)],svf.coef_[(0,1)],svf.intercept_[0]],(1,5)),
-        columns=['C','measure','coef1','coef2','inter'],index=None))
-
-    # Test using the following values for coefficient 'c'
 c_coeff=np.array([0.005,0.02,0.05,0.2,0.5,1,2,5,15,40,100])
 
 # Iterate across all 'c' coefficients and record accuracy & linear params

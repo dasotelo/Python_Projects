@@ -129,25 +129,22 @@ intercept=acc_train_sc.loc[acc_train_sc.C==0.2,['inter']].values/(-1*
 yr=np.ravel(xr*slope+intercept)
 ax[1].plot(xr,yr,linestyle="--",c='purple')
 
-plt.show()
-
 # Re-plot datapoints on x-y scatter
 # WORK IN PROGRESS
 for i in range(len(ax)):
-    for j in range(len(ax[0])):
-        x1=cscr.loc[cscr['TUIT30']==0.0,['SAT_AVG']]
-        y1=cscr.loc[cscr['TUIT30']==0.0,['faminc']]
-        x2=cscr.loc[cscr['TUIT30']==1.0,['SAT_AVG']]
-        y2=cscr.loc[cscr['TUIT30']==1.0,['faminc']]
-        plt.scatter(x1,y1,c='green',marker='o',edgecolors='k',alpha=0.4,
-            label='Under $20k')
-        plt.scatter(x2,y2,c='red',marker='o',edgecolors='k',alpha=0.4,
-            label='$20k & Over')
-        plt.legend()
-        plt.xlabel('Average SAT Score')
-        plt.ylabel('Family Income')
-        plt.title('Private College Tuition Over/Under $20k, with Linear SVM Hyperplane')
-        plt.ylim(0,150000)
-        plt.xlim(500,1600)
-
+    x1=feat_test.loc[target_test==0.0,['SAT_AVG']]
+    y1=feat_test.loc[target_test==0.0,['faminc']]
+    x2=feat_test.loc[target_test==1.0,['SAT_AVG']]
+    y2=feat_test.loc[target_test==1.0,['faminc']]
+    ax[i].scatter(x1,y1,c='green',marker='o',edgecolors='k',alpha=0.4,
+        label='Under $20k')
+    ax[i].scatter(x2,y2,c='red',marker='o',edgecolors='k',alpha=0.4,
+        label='$20k & Over')
+    ax[i].legend()
+    ax[i].xlabel('Average SAT Score')
+    ax[i].ylabel('Family Income')
+    ax[i].title('Private College Tuition Over/Under $20k, with Linear SVM Hyperplane')
+    ax[i].ylim(0,150000)
+    ax[i].xlim(500,1600)
+    
 plt.show()

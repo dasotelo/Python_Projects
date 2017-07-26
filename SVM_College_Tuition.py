@@ -14,14 +14,6 @@
 #
 ###############################
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jul 23 20:20:26 2017
-
-@author: sotelo
-"""
-
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np

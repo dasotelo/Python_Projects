@@ -14,6 +14,14 @@
 #
 ###############################
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jul 23 20:20:26 2017
+
+@author: sotelo
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -82,13 +90,14 @@ acc_test=pd.DataFrame([],index=None,columns=['C','measure','coef1','coef2',
     'inter'])
 
 # Test using the following values for coefficient 'c'
-c_coeff=np.array([0.005,0.02,0.05,0.2,0.5,1,2,5,10,25,100])
+c_coeff=np.array([5**-3,5**-2,5**-1,1,5,5**2,5**3])
+#c_coeff=np.array([0.005,0.02,0.05,0.2,0.5,1,2,5,10,25,100])
 
 # Iterate across all 'c' coefficients and record accuracy & linear params
 t1=time()
 for i in c_coeff:
     print(i)
-    svf=SVC(C=i,kernel='linear')
+    svf=SVC(C=i,kernel='linear')#,max_iter=10**6)
     svf=svf.fit(feat_train,target_train)
     train_acc=sum(svf.predict(feat_train)==target_train)/len(target_train)
     test_acc=sum(svf.predict(feat_test)==target_test)/len(target_test)
@@ -120,7 +129,7 @@ acc_test_sc=pd.DataFrame([],index=None,columns=['C','measure','coef1','coef2',
 t1=time()
 for i in c_coeff:
     print(i)
-    svf=SVC(C=i,kernel='linear')
+    svf=SVC(C=i,kernel='linear')#,max_iter=10**6)
     svf=svf.fit(feat_train_sc,target_train)
     train_acc_sc=sum(svf.predict(feat_train_sc)==target_train)/len(target_train)
     test_acc_sc=sum(svf.predict(feat_test_sc)==target_test)/len(target_test)
@@ -140,15 +149,49 @@ print(t2-t1,' seconds')
 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 print('SVM training & test accuracy-')
 print('Non-standardized data:')
-print(acc_train[['C','measure']])
-print(acc_test[['C','measure']])
+print(acc_train)
+print(acc_test)
 
 print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
 print('SVM training & test accuracy-')
 print('Standardized data:')
-print(acc_train_sc[['C','measure']])
-print(acc_test_sc[['C','measure']])
-  
+print(acc_train_sc)
+print(acc_test_sc)
+
+# Define function to plot decision surfaces for non-standardized SVM 
+def plot_surf_ns(C_coef,axr,axc,xr,color):
+    slope=acc_train.loc[acc_train.C==C_coef,['coef1']].values/(-1*
+        acc_train.loc[acc_train.C==C_coef,['coef2']].values)              
+    intercept=acc_train.loc[acc_train.C==C_coef,['inter']].values/(-1*
+        acc_train.loc[acc_train.C==C_coef,['coef2']].values)
+    intercept_p1=(acc_train.loc[acc_train.C==C_coef,['inter']]-1).values/(-1*
+        acc_train.loc[acc_train.C==C_coef,['coef2']].values)
+    intercept_m1=(acc_train.loc[acc_train.C==C_coef,['inter']]+1).values/(-1*
+        acc_train.loc[acc_train.C==C_coef,['coef2']].values)
+    yr=np.ravel(xr*slope+intercept)
+    yrp1=np.ravel(xr*slope+intercept_p1)
+    yrm1=np.ravel(xr*slope+intercept_m1)
+    ax[axr,axc].plot(xr,yr,linestyle="-",c=color)
+    ax[axr,axc].plot(xr,yrp1,linestyle="--",c=color)
+    ax[axr,axc].plot(xr,yrm1,linestyle="--",c=color)
+    
+# Define function to plot decision surfaces for non-standardized SVM 
+def plot_surf_s(C_coef,axr,axc,xr,color):
+    slope=acc_train_sc.loc[acc_train_sc.C==C_coef,['coef1']].values/(-1*
+        acc_train_sc.loc[acc_train_sc.C==C_coef,['coef2']].values)              
+    intercept=acc_train_sc.loc[acc_train_sc.C==C_coef,['inter']].values/(-1*
+        acc_train_sc.loc[acc_train_sc.C==C_coef,['coef2']].values)
+    intercept_p1=(acc_train_sc.loc[acc_train_sc.C==C_coef,['inter']]-1).values/(-1*
+        acc_train_sc.loc[acc_train_sc.C==C_coef,['coef2']].values)
+    intercept_m1=(acc_train_sc.loc[acc_train_sc.C==C_coef,['inter']]+1).values/(-1*
+        acc_train_sc.loc[acc_train_sc.C==C_coef,['coef2']].values)
+    yr=np.ravel(xr*slope+intercept)
+    yrp1=np.ravel(xr*slope+intercept_p1)
+    yrm1=np.ravel(xr*slope+intercept_m1)
+    ax[axr,axc].plot(xr,yr,linestyle="-",c=color)
+    ax[axr,axc].plot(xr,yrp1,linestyle="--",c=color)
+    ax[axr,axc].plot(xr,yrm1,linestyle="--",c=color)
+     
 # Set up facet grid showing plots of results
 f,ax=plt.subplots(2,3)
 f.set_size_inches(15,8)
@@ -156,115 +199,24 @@ f.text(x=0,y=0.5,s='Family Income',rotation='vertical',size=12)
 f.text(x=0.02,y=0.8,s='Non-Standardized',rotation='vertical',size=10)
 f.text(x=0.02,y=0.28,s='Standardized',rotation='vertical',size=10)
 f.text(x=0.5,y=0,s='Average SAT Score',rotation='horizontal',size=12)
-f.text(x=0.15,y=0.92,s='C=0.05',size=12)
+f.text(x=0.15,y=0.92,s='C=0.008',size=12)
 f.text(x=0.5,y=0.92,s='C=1.00',size=12)
-f.text(x=0.85,y=0.92,s='C=25.0',size=12)
+f.text(x=0.85,y=0.92,s='C=125',size=12)
 f.suptitle('Private College Tuition Over/Under $20k, with Linear SVM Hyperplane',
     size=16)
-f.tight_layout(rect=[0.05,0,1,0.93]) 
-    
-# Plot linear decision planes having coef C=0.05 for non-standardized data
-xr=np.arange(1,1600)
-slope=acc_train.loc[acc_train.C==0.05,['coef1']].values/(-1*
-    acc_train.loc[acc_train.C==0.05,['coef2']].values)              
-intercept=acc_train.loc[acc_train.C==0.05,['inter']].values/(-1*
-    acc_train.loc[acc_train.C==0.05,['coef2']].values)
-intercept_p1=(acc_train.loc[acc_train.C==0.05,['inter']]-1).values/(-1*
-    acc_train.loc[acc_train.C==0.05,['coef2']].values)
-intercept_m1=(acc_train.loc[acc_train.C==0.05,['inter']]+1).values/(-1*
-    acc_train.loc[acc_train.C==0.05,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-ax[0,0].plot(xr,yr,linestyle="-",c='blue')
-ax[0,0].plot(xr,yrp1,linestyle="--",c='blue')
-ax[0,0].plot(xr,yrm1,linestyle="--",c='blue')
+f.tight_layout(rect=[0.05,0,1,0.93])  
 
-# Plot linear decision planes having coef C=1 for non-standardized data
-xr=np.arange(1,1600)
-slope=acc_train.loc[acc_train.C==1.0,['coef1']].values/(-1*
-    acc_train.loc[acc_train.C==1.0,['coef2']].values)              
-intercept=acc_train.loc[acc_train.C==1.0,['inter']].values/(-1*
-    acc_train.loc[acc_train.C==1.0,['coef2']].values)
-intercept_p1=(acc_train.loc[acc_train.C==1.0,['inter']]-1).values/(-1*
-    acc_train.loc[acc_train.C==1.0,['coef2']].values)
-intercept_m1=(acc_train.loc[acc_train.C==1.0,['inter']]+1).values/(-1*
-    acc_train.loc[acc_train.C==1.0,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-ax[0,1].plot(xr,yr,linestyle="-",c='blue')
-ax[0,1].plot(xr,yrp1,linestyle="--",c='blue')
-ax[0,1].plot(xr,yrm1,linestyle="--",c='blue')
+# Plot 3 decision surfaces for non-standardized features, and 3 decision
+# surfaces for standardized features
+xr_ns=np.arange(1,1600)
+xr_s=np.arange(-4,4,0.01)
 
-# Plot linear decision planes having coef C=25.0 for non-standardized data
-xr=np.arange(1,1600)
-slope=acc_train.loc[acc_train.C==25.0,['coef1']].values/(-1*
-    acc_train.loc[acc_train.C==25.0,['coef2']].values)              
-intercept=acc_train.loc[acc_train.C==25.0,['inter']].values/(-1*
-    acc_train.loc[acc_train.C==25.0,['coef2']].values)
-intercept_p1=(acc_train.loc[acc_train.C==25.0,['inter']]-1).values/(-1*
-    acc_train.loc[acc_train.C==25.0,['coef2']].values)
-intercept_m1=(acc_train.loc[acc_train.C==25.0,['inter']]+1).values/(-1*
-    acc_train.loc[acc_train.C==25.0,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-ax[0,2].plot(xr,yr,linestyle="-",c='blue')
-ax[0,2].plot(xr,yrp1,linestyle="--",c='blue')
-ax[0,2].plot(xr,yrm1,linestyle="--",c='blue')
-
-# Plot linear decision planes having coef C=0.05 for standardized data
-xr=np.arange(-4,4,0.01)
-slope=acc_train_sc.loc[acc_train_sc.C==0.05,['coef1']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==0.05,['coef2']].values)              
-intercept=acc_train_sc.loc[acc_train_sc.C==0.05,['inter']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==0.05,['coef2']].values)
-intercept_p1=(acc_train_sc.loc[acc_train_sc.C==0.05,['inter']]-1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==0.05,['coef2']].values)
-intercept_m1=(acc_train_sc.loc[acc_train_sc.C==0.05,['inter']]+1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==0.05,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-ax[1,0].plot(xr,yr,linestyle="-",c='purple')
-ax[1,0].plot(xr,yrp1,linestyle="--",c='purple')
-ax[1,0].plot(xr,yrm1,linestyle="--",c='purple')
-
-# Plot linear decision planes having coef C=1 for standardized data
-xr=np.arange(-4,4,0.01)
-slope=acc_train_sc.loc[acc_train_sc.C==1.0,['coef1']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==1.0,['coef2']].values)              
-intercept=acc_train_sc.loc[acc_train_sc.C==1.0,['inter']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==1.0,['coef2']].values)
-intercept_p1=(acc_train_sc.loc[acc_train_sc.C==1.0,['inter']]-1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==1.0,['coef2']].values)
-intercept_m1=(acc_train_sc.loc[acc_train_sc.C==1.0,['inter']]+1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==1.0,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-yr=np.ravel(xr*slope+intercept)
-ax[1,1].plot(xr,yr,linestyle="-",c='purple')
-ax[1,1].plot(xr,yrp1,linestyle="--",c='purple')
-ax[1,1].plot(xr,yrm1,linestyle="--",c='purple')
-
-# Plot linear decision planes having coef C=25.0 for standardized data
-xr=np.arange(-4,4,0.01)
-slope=acc_train_sc.loc[acc_train_sc.C==25.0,['coef1']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==25.0,['coef2']].values)              
-intercept=acc_train_sc.loc[acc_train_sc.C==25.0,['inter']].values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==25.0,['coef2']].values)
-intercept_p1=(acc_train_sc.loc[acc_train_sc.C==25.0,['inter']]-1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==25.0,['coef2']].values)
-intercept_m1=(acc_train_sc.loc[acc_train_sc.C==25.0,['inter']]+1).values/(-1*
-    acc_train_sc.loc[acc_train_sc.C==25.0,['coef2']].values)
-yr=np.ravel(xr*slope+intercept)
-yrp1=np.ravel(xr*slope+intercept_p1)
-yrm1=np.ravel(xr*slope+intercept_m1)
-ax[1,2].plot(xr,yr,linestyle="-",c='purple')
-ax[1,2].plot(xr,yrp1,linestyle="--",c='purple')
-ax[1,2].plot(xr,yrm1,linestyle="--",c='purple')
+plot_surf_ns(5**-3,0,0,xr_ns,'blue')
+plot_surf_ns(1.0,0,1,xr_ns,'blue')
+plot_surf_ns(5**3,0,2,xr_ns,'blue')
+plot_surf_s(5**-3,1,0,xr_s,'purple')
+plot_surf_s(1.0,1,1,xr_s,'purple')
+plot_surf_s(5**3,1,2,xr_s,'purple')
 
 # Re-plot datapoints on x-y scatter for (2,3) subplots
 # non-standardized data in [0,:], standardized data in [1,:]
